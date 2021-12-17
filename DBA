@@ -1,24 +1,26 @@
- <?php
-$servername = "localhost";
-$username = "username";
-$password = "password";
-$dbname = "myDB";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+<?php
+/* Attempt MySQL server connection. Assuming you are running MySQL
+server with default setting (user 'root' with no password) */
+$link = mysqli_connect("localhost", "root", "", "demo");
+ 
 // Check connection
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
+if($link === false){
+    die("ERROR: Could not connect. " . mysqli_connect_error());
 }
-
-$sql = "INSERT INTO MyGuests (number,firstname, lastname, email,adress,genre)
-VALUES ('John', 'Doe', 'john@example.com')";
-
-if ($conn->query($sql) === TRUE) {
-  echo "New record created successfully";
-} else {
-  echo "Error: " . $sql . "<br>" . $conn->error;
+ 
+// Escape user inputs for security
+$first_name = mysqli_real_escape_string($link, $_REQUEST['first_name']);
+$last_name = mysqli_real_escape_string($link, $_REQUEST['last_name']);
+$email = mysqli_real_escape_string($link, $_REQUEST['email']);
+ 
+// Attempt insert query execution
+$sql = "INSERT INTO persons (first_name, last_name, email) VALUES ('$first_name', '$last_name', '$email')";
+if(mysqli_query($link, $sql)){
+    echo "Records added successfully.";
+} else{
+    echo "ERROR: Could not able to execute $sql. " . mysqli_error($link);
 }
-
-$conn->close();
-?> 
+ 
+// Close connection
+mysqli_close($link);
+?>
